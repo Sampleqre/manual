@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Lab Manual — PyCharm IDE</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- Title Bar -->
+  <div class="titlebar">
+    <div class="titlebar-left">
+      <div class="traffic-lights">
+        <span class="tl red"></span>
+        <span class="tl yellow"></span>
+        <span class="tl green"></span>
+      </div>
+      <span class="titlebar-name">PyCharm — AI Lab Manual</span>
+    </div>
+    <div class="titlebar-right">
+      <span class="tb-icon">▾ Project</span>
+    </div>
+  </div>
+
+  <!-- Menu Bar -->
+  <div class="menubar">
+    <span>File</span><span>Edit</span><span>View</span><span>Navigate</span><span>Code</span><span>Run</span><span>Tools</span><span>Help</span>
+  </div>
+
+  <div class="ide-layout">
+
+    <!-- Sidebar: Project Tree -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-icon">📁</span> Project
+      </div>
+      <div class="tree">
+        <div class="tree-root">
+          <span class="arrow">▾</span>
+          <span class="folder-icon">📂</span>
+          <span>ai_lab_manual</span>
+        </div>
+        <div class="tree-group" id="program-list">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-header">
+          <span class="sidebar-icon">🔧</span> Structure
+        </div>
+        <div class="structure-info" id="structure-info">
+          <span class="hint">Select a program to view its structure</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Editor Area -->
+    <main class="editor-area">
+
+      <!-- Tab Bar -->
+      <div class="tab-bar" id="tab-bar">
+        <div class="tab welcome-tab active" id="welcome-tab">
+          <span class="tab-icon">🏠</span> Welcome
+          <span class="tab-close">×</span>
+        </div>
+        <div class="tab active-tab hidden" id="active-tab">
+          <span class="tab-icon">🐍</span>
+          <span id="active-tab-name">program.py</span>
+          <span class="tab-close" onclick="closeTab()">×</span>
+        </div>
+      </div>
+
+      <!-- Welcome Screen -->
+      <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-logo">
+          <div class="pycharm-logo">
+            <svg width="64" height="64" viewBox="0 0 64 64">
+              <defs>
+                <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#21D789"/>
+                  <stop offset="100%" style="stop-color:#087CFA"/>
+                </linearGradient>
+              </defs>
+              <rect width="64" height="64" rx="12" fill="url(#pg)"/>
+              <text x="12" y="46" font-size="36" fill="white" font-family="serif" font-weight="bold">Py</text>
+            </svg>
+          </div>
+          <h1 class="welcome-title">AI Lab Manual</h1>
+          <p class="welcome-subtitle">Artificial Intelligence and Applications</p>
+        </div>
+        <div class="program-grid" id="program-grid">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Code Viewer -->
+      <div class="code-viewer hidden" id="code-viewer">
+        <div class="code-header">
+          <div class="breadcrumb">
+            <span class="bc-project">ai_lab_manual</span>
+            <span class="bc-sep">›</span>
+            <span class="bc-file" id="bc-filename">bfs.py</span>
+          </div>
+          <div class="code-actions">
+            <button class="btn-run" id="btn-run">▶ Run</button>
+            <button class="btn-copy" id="btn-copy" onclick="copyCode()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="code-container">
+          <div class="line-numbers" id="line-numbers"></div>
+          <pre class="code-block" id="code-block"><code id="code-content"></code></pre>
+        </div>
+
+        <div class="output-panel" id="output-panel">
+          <div class="output-header">
+            <span class="out-icon">▶</span> Run — <span id="out-filename">bfs.py</span>
+            <button class="out-close" onclick="toggleOutput()">×</button>
+          </div>
+          <pre class="output-content" id="output-content"></pre>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Right Panel: Info -->
+    <div class="info-panel">
+      <div class="info-header">Documentation</div>
+      <div class="info-body" id="info-body">
+        <p class="info-hint">Click any program to view its code and documentation.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Status Bar -->
+  <div class="statusbar">
+    <span class="sb-left">
+      <span class="sb-branch">🌿 main</span>
+      <span class="sb-ok">✓ No problems</span>
+    </span>
+    <span class="sb-right">
+      <span>Python 3.10</span>
+      <span>UTF-8</span>
+      <span>LF</span>
+      <span id="sb-line">Ln 1, Col 1</span>
+    </span>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">✓ Code copied to clipboard!</div>
+
+  <script src="programs.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
