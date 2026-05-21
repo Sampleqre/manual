@@ -581,5 +581,5 @@ history = model.fit(
     train_generator,
     epochs=epochs, 
     validation_data=validation_generator
-)
-}]
+)'
+}];
