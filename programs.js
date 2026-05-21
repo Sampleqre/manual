@@ -533,62 +533,52 @@ print(comparison)`
     lines: 46,
     output: `Found 2000 images belonging to 2 classes.\nFound 1000 images belonging to 2 classes.\n\nEpoch 1/10 — accuracy: 0.5477 — val_accuracy: 0.5746\nEpoch 2/10 — accuracy: 0.4375 — val_accuracy: 0.5706\n...\nEpoch 10/10 — accuracy: 0.5000 — val_accuracy: 0.5212`,
     code: `# NOTE: Run in Google Colab
-# Step 1: Set Runtime -> Change Runtime type -> GPU
-# Step 2: Download dataset
-# !wget --no-check-certificate \\
-#   https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip \\
-#   -O /tmp/cats_and_dogs_filtered.zip
-# !unzip /tmp/cats_and_dogs_filtered.zip
-
 import tensorflow as tf
-from tensorflow.keras.layers import Conv2D, Flatten, Dense
+import tensorflow_datasets as tfds
+from tensorflow.keras.layers import Flatten, Dense
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-# Define constants
+# Step 1: Load the dataset directly from TensorFlow's official catalog
+(train_ds, validation_ds), info = tfds.load(
+    'cats_and_dogs_filtered',
+    split=['train', 'validation'],
+    as_supervised=True,  # Returns a clean (image, label) tuple
+    with_info=True
+)
+
+# Constants
 batch_size = 32
 img_height = 150
-img_width  = 150
-epochs     = 10
+img_width = 150
+epochs = 10
 
-# Create image data generators
-train_datagen      = ImageDataGenerator(rescale=1./255)
-validation_datagen = ImageDataGenerator(rescale=1./255)
+# Step 2: Preprocessing function (Resizing and Rescaling to 1./255)
+def preprocess_image(image, label):
+    image = tf.image.resize(image, (img_height, img_width))
+    image = image / 255.0  # Normalizes pixel values between 0.0 and 1.0
+    return image, label
 
-train_generator = train_datagen.flow_from_directory(
-    '/content/cats_and_dogs_filtered/train',
-    target_size=(img_height, img_width),
-    batch_size=batch_size,
-    class_mode='binary'
-)
-validation_generator = validation_datagen.flow_from_directory(
-    '/content/cats_and_dogs_filtered/validation',
-    target_size=(img_height, img_width),
-    batch_size=batch_size,
-    class_mode='binary'
-)
+# Format, shuffle, and batch the pipelines
+train_generator = train_ds.map(preprocess_image).shuffle(1000).batch(batch_size).prefetch(buffer_size=tf.data.AUTOTUNE)
+validation_generator = validation_ds.map(preprocess_image).batch(batch_size).prefetch(buffer_size=tf.data.AUTOTUNE)
 
-# Build the neural network
-model = Sequential([
+print(f"Dataset successfully loaded via TFDS!")
+print(f"Training samples: {info.splits['train'].num_examples}")
+print(f"Validation samples: {info.splits['validation'].num_examples}")
+
+# Step 3: Build the Sequential Model
+model = Sequential([ 
     Flatten(input_shape=(img_height, img_width, 3)),
-    Dense(128, activation='relu'),
+    Dense(128, activation='relu'), 
     Dense(1, activation='sigmoid')
 ])
 
-# Compile the model
-model.compile(
-    optimizer='adam',
-    loss='binary_crossentropy',
-    metrics=['accuracy']
-)
+# Step 4: Compile the model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-# Train the model
+# Step 5: Train the model
 history = model.fit(
     train_generator,
-    steps_per_epoch=train_generator.samples // batch_size,
-    epochs=epochs,
-    validation_data=validation_generator,
-    validation_steps=validation_generator.samples // batch_size
-)`
-  }
-];
+    epochs=epochs, 
+    validation_data=validation_generator
+)
